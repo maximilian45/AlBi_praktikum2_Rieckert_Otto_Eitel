@@ -9,6 +9,13 @@ public class Knoten extends GenomAssembling{
 		this.outKantenIds = outKantenIds; 
 		this.value = value;
 	}
+	public Knoten(int id, String value){
+		this.id = id;
+		this.value = value;
+		this.inKantenIds = new int[1];
+		this.outKantenIds = new int[1];
+	}
+	
 	public int getId(){
 		return this.id;
 	}
