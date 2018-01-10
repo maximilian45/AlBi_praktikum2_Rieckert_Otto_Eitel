@@ -4,6 +4,15 @@ public class Kante extends GenomAssembling{
 	protected int endKnotenId;
 	protected boolean besucht;
 	protected String value;
+	
+	public Kante(int id, String value){
+		this.id = id;
+		this.value = value;
+		this.startKnotenId = 0;
+		this.endKnotenId = 0;
+		this.besucht = false;
+	}
+	
 	public Kante(int id, int startKnotenId, int endKnotenId, boolean besucht, String value){
 		this.id = id;
 		this.startKnotenId = startKnotenId;
