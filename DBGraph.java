@@ -44,7 +44,7 @@ public final class DBGraph {
 		for(int l = 0; l < reads.size(); l++){
 			ArrayList<String> temp = new ArrayList<String>();
 			String read = reads.get(l);
-			//durchgehen fr die ersten stellen des einzelnen reads 
+			//durchgehen für die ersten stellen des einzelnen reads 
 			for(int i = 0; i < reads.get(l).length()-k ; i++){
 				String pattern = "";   //read.substring(i,(k-1+i));
 				for(int j = 0; j<k ; j++){
@@ -72,6 +72,24 @@ public final class DBGraph {
 			suffix += read.charAt(i);
 		}
 		return suffix;
+	}
+	
+	public static boolean isPrefix(String prefix, String read){
+		for(int i = 0; i <= read.length()-1;i++){
+			if(!(read.charAt(i) == prefix.charAt(i))){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean isSuffix(String suffix, String read){
+		for(int i = 1; i< read.length();i++){
+			if(!(read.charAt(i)==suffix.charAt(i-1))){
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	//FremdCode
@@ -125,8 +143,8 @@ public final class DBGraph {
 				System.out.println(temp.get(j));
 			}
 			
-		}*/
-		//Aufbau von Kanten zu jedem read mit den dazugehrigen Knoten
+		}
+		//Aufbau von Kanten zu jedem read mit den dazugehörigen Knoten
 		for(int i = 0; i<reads.size();i++){
 			ArrayList<String> temp = reads.get(i);
 			for(int j = 0; j< temp.size(); j++){
@@ -139,16 +157,56 @@ public final class DBGraph {
 			}
 		}
 		
-		// Verschmelzen von gleichen Knoten (NOCH NICHT FERTIG!!!)
+		// Verschmelzen von gleichen Knoten
 		for(RelationshipEdge edge : g.edgeSet()){
 			String target = edge.getV2().toString();
 			for(RelationshipEdge edge2 :g.edgeSet()){
 				String source = edge2.getV1().toString();
 				
 			}
+		}*/
+		//Aufbau der Liste der k-1 mere 
+		ArrayList<String> knotenListe = new ArrayList<String>();
+		for(int i = 0; i<reads.size();i++){
+			ArrayList<String> temp = reads.get(i);
+			for(int j = 0; j< temp.size(); j++){
+				knotenListe.add(buildPrefix(temp.get(i)));
+				knotenListe.add(buildSuffix(temp.get(i)));
+			}
+		}
+		// Löschen von dublikaten durch abspeichern in ein set, dass keine dublikate erlaubt 
+		// und dann rückführen ind die knotenListe   knotenListe enthält alle k-1 mere der Reads, also alle suffixe und prefixe
+		Set<String> hs = new HashSet<>();
+		hs.addAll(knotenListe);
+		knotenListe.clear();
+		knotenListe.addAll(hs);
+		
+		//Liste der kmere von einer ArrayList ausArrayLists in eine einfach ArrayList umgewandelt splicedreads beinhaltet alle 85mere der reads
+		ArrayList<String> splicedReads = new ArrayList<String>();
+		for(int i = 0; i<reads.size();i++){
+			ArrayList<String> temp = reads.get(i);
+			for(int j = 0; j< temp.size(); j++){
+				splicedReads.add(temp.get(j));
+			}
 		}
 		
-		
+		//Aufbau des Graphen
+		for(int i=0;i<knotenListe.size();i++){
+			String temp1 = knotenListe.get(i);
+			knotenListe.remove(i);
+			for(int j = 0; j<knotenListe.size();j++){
+				String temp2 = knotenListe.get(j);
+				for(int k =0; k< splicedReads.size();k++){
+					if((isPrefix(temp1,splicedReads.get(k))) && ( isSuffix(temp2,splicedReads.get(k) ) ) ){
+						g.addEdge(temp1,temp2, new RelationshipEdge(temp1,temp2,(splicedReads.get(k))));
+					}else{
+						if((isPrefix(temp2,splicedReads.get(k))) && ( isSuffix(temp1,splicedReads.get(k) ) )){
+							g.addEdge(temp2,temp1, new RelationshipEdge(temp2,temp1,(splicedReads.get(k))));
+						}
+					}
+				}
+			}
+		}
 		
 		//Test Ausgabe
 		for(RelationshipEdge edge : g.edgeSet()){
