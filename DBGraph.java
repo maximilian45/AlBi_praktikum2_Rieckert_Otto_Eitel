@@ -75,9 +75,13 @@ public final class DBGraph {
 	}
 	
 	public static boolean isPrefix(String prefix, String read){
+		int x = 0;
 		for(int i = 0; i <= read.length()-1;i++){
-			if(!(read.charAt(i) == prefix.charAt(i))){
+			if(!(read.charAt(i) == prefix.charAt(x))){
 				return false;
+			}
+			if(x<83){
+			x+=1;
 			}
 		}
 		return true;
@@ -170,8 +174,8 @@ public final class DBGraph {
 		for(int i = 0; i<reads.size();i++){
 			ArrayList<String> temp = reads.get(i);
 			for(int j = 0; j< temp.size(); j++){
-				knotenListe.add(buildPrefix(temp.get(i)));
-				knotenListe.add(buildSuffix(temp.get(i)));
+				knotenListe.add(buildPrefix(temp.get(j)));
+				knotenListe.add(buildSuffix(temp.get(j)));
 			}
 		}
 		// Löschen von dublikaten durch abspeichern in ein set, dass keine dublikate erlaubt 
