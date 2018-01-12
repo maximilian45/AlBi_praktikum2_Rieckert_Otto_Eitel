@@ -1,1 +1,2 @@
-test
+Unsere Beste Version ist die Datei GenomAssembling.java , diese ist einfach mit javac zu kompilieren und über java GenomAssembling auszuführen.
+Die anderen Datein sind ein älterer Entwurf, die allerdings Laufzeittechnisch noch schlechter laufen als GenomAssembling.
