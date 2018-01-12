@@ -1,119 +1,153 @@
+//package aufgabe2;
 import java.util.*;
 import java.io.*;
 
 class GenomAssembling{
+	
 	public static void main(String[] args) throws IOException{
 	
-		FileReader fr = new FileReader("test.txt");
+		FileReader fr = new FileReader("C:\\Users\\Acedon\\Desktop\\Uni\\Albi Prjekt 2\\test.txt");
 		BufferedReader br = new BufferedReader(fr);
 		
 		List<String> reads = new ArrayList<String>();
 		
-		for(int i = 0; i </*=*/ 1 /*33609*/; i++){
+		for(int i = 0; i <= 33609; i++){
+		//for(int i = 0; i <= 15; i++){
 			reads.add(br.readLine());
 			
 		}
 		br.close();
 		
-		int k = 85;
-		ArrayList<ArrayList<String>> brokenReads = new ArrayList<ArrayList<String>>();
+		int k = 50;
+		ArrayList<String> brokenReads = new ArrayList<String>();
+		ArrayList<String> startNodes = new ArrayList<String>();
+		ArrayList<String> endNodes = new ArrayList<String>();
+		ArrayList<ArrayList<String>> kanten = new ArrayList<ArrayList<String>>();
 		
 		//Bilden der reads breaks
 		
-		// EVT INERFFIZIENT
-		
 		//nehmen des ersten reads
-		for(int l = 0; l < reads.size(); l++){
-			ArrayList<String> temp = new ArrayList<String>();
+		for(int l = 1; l < reads.size(); l++){
 			String read = reads.get(l);
-			//durchgehen fÃ¼r die ersten stellen des einzelnen reads 
-			for(int i = 0; i < reads.get(l).length()-k ; i++){
-				String pattern = "";
+			System.out.println(read);
+			
+			String pattern = "";
+			String node = "";
+			String node2 = "";
 				//bildung dessen kmeres
-				for(int j = 0; j<k ; j++){
-					pattern += read.charAt(i+j);
-				}
-				temp.add(pattern);
+			for(int j = 0; j<(101-k) ; j++){ //anzupassen bei anderer read-Laenge!
+			//for(int j = 0; j<(4-k) ; j++){
+				pattern = read.substring(j, j+k);
+				node = read.substring(j, j+k-1);
+				node2 = read.substring(j+1, j+k);
 			}
-			brokenReads.add(temp);
-		}	
-	
-	
-	int countEdge = 0;
-	int countNode= 0;
-	Object[] dbgraph = new Object[1];
-	//Kanten[] allEdges = new Kanten[1];
-	//Knoten[] allNodes = new Knoten[2];
-	
-	ArrayList<Object> allEdges = new ArrayList<Object>();
-	ArrayList<Object> allNodes = new ArrayList<Object>();
-	
-	for(int i = 0; i < brokenReads.size(); i++){
-		ArrayList<String> temp = new ArrayList<String>();
-		temp = brokenReads.get(i);
-		for(int j = 0; j < temp.size();j++){
-			Kante edge = new Kante(countEdge,temp.get(j));
-			countEdge += 1;
-			Knoten inNode = new Knoten(countNode, temp.get(j).substring(0,(temp.size()-2)));
-			countNode += 1;
-			Knoten outNode = new Knoten(countNode,temp.get(j).substring(1));
-			countNode += 1;
+			brokenReads.add(pattern);
+			startNodes.add(node);  // enthält duplikate!
+			endNodes.add(node2);
 			
-			int[] temp2 = new int[1];
-			temp2[0] = 0;
-			int[] temp3 = new int[1];
-			temp3[0] = edge.id;
-			edge.startKnotenId = inNode.id;
-			edge.endKnotenId = outNode.id;
-			inNode.inKantenIds = temp2;
-			inNode.outKantenIds = temp3;
-			outNode.inKantenIds = temp3;
-			outNode.outKantenIds = temp2;
+		}		
+		
+		String node = new String();
+		ArrayList<String> realStartNodes = new ArrayList<String>();
+		
+		for (int m = 0; m < startNodes.size(); m++) {
+		//for (int m = 0; m < 6; m++) {
+			node = startNodes.get(m);
 			
-			
-			//if(j==0){
+			if(!realStartNodes.contains(node)) {
+				//alleKanten.clear();
+				ArrayList<String> alleKanten = new ArrayList<String>();
+				realStartNodes.add(node);
 				
+				alleKanten.add(brokenReads.get(m));
 				
-				allEdges.add(edge);
-				allNodes.add(inNode);
-				allNodes.add(outNode);
-				
-				
-			/*}else{
-				//Kanten[] newEdges = new Kanten[(allEdges.length())+1];
-				//for(int k = 0; k < allEdges.length(); k++){
-				//	newEdges.add(allEdges[k]);
-				//}
-				//newEdges.add(edge);
-				//allEdges = newEdges;
-				
-				
-				Knoten[] newNodes = new Knoten[(allNodes.length())+2];
-				for(int l = 0; l < allNodes.length();l++){
-					newNodes.add(allNodes[l]);
+				for (int n = m+1; n < startNodes.size(); n++) {
+					if(startNodes.get(n).equals(node)) {
+						alleKanten.add(brokenReads.get(n));
+					}	
+					
 				}
-				newNodes.add(inNode);
-				newNodes.add(outNode);
-				allNodes = newNodes;
-			}*/
-			
-			
+				kanten.add(alleKanten);
+			} 			
 		}
-	}
-	ArrayList<String> temp = new ArrayList<String>();
-	temp = brokenReads.get(0);
-	String temp2 = temp.get(0);
-	Object tempKante = allEdges.get(0);
-	Object tempInNode = allNodes.get(0);
-	Object tempOutNode = allNodes.get(1);
-	System.out.println("READ !!!!!");
-	System.out.println(temp2);
-	System.out.println("ALL EDGES !!!!!");
-	System.out.println(tempKante);
-	System.out.println("IN NODE !!!!!");
-	System.out.println(tempInNode);
-	System.out.println("OUT NODE !!!!!");
-	System.out.println(tempOutNode);
-	
+		
+		// de Bruijn Graph:
+		// Knoten = realStartNodes (+ Knoten ohne ausgehende Kanten)
+		// Kanten = kanten
+		
+		// Anfang von Contig = branching Knoten! + Knoten ohne eingehende Kanten
+		// 												= Knoten, der nicht in endNodes enthalten ist
+		
+
+		int index = realStartNodes.size() - 1;
+		int nextIndex;
+		ArrayList<String> contigs = new ArrayList<String>();
+		FileWriter file = new FileWriter("C:\\Users\\Acedon\\Desktop\\Uni\\Albi Prjekt 2\\output.fasta"); // FILEREADER ANPAsSEN!!!
+		int numContigs = 0;
+		// 
+		while(index >= 0) {
+			int numBranches = kanten.get(index).size();
+			if(numBranches > 1) {
+				for(int i = 0; i < numBranches; i++) {
+					String contig = new String();
+					contig = kanten.get(index).get(i); 
+					nextIndex = realStartNodes.indexOf(contig.substring(contig.length()-k+1, contig.length())); // Wählen des Nachfolgenen Knotens
+					while (nextIndex != -1) { // endnode of last thingy is also startnode
+						if(kanten.get(nextIndex).size() == 1 && nextIndex != index) { // next Node is non-branching er keine ausgehenden Kanten mehr hat und nicht der selbe knoten ist
+							contig += kanten.get(nextIndex).get(0).charAt(k-1); // Gehen die Kante entlang speichern sie 
+							kanten.remove(nextIndex); // und löschen sie
+							realStartNodes.remove(nextIndex);// Löschen den Knoten, da er keine Kanten mehr besitzt und somit nicht mehr benötigt wird
+							if(nextIndex < index) index--; // Da wir den Knoten davor gelöscht haben rutscht der aktuelle auf und sein index sinkt somit um 1
+							nextIndex = realStartNodes.indexOf(contig.substring(contig.length()-k+1, contig.length()));
+						} else { // if next node is branching break while + end contig
+							nextIndex = -1;
+						}
+					}
+					numContigs++;
+					contigs.add(contig);
+					file.write(">Contig Nummer "+ numContigs);
+					file.write(System.lineSeparator());
+					file.write(contig); // FASTA ANPASSUNG
+					file.write(System.lineSeparator());
+					
+				}
+				kanten.remove(index);
+				realStartNodes.remove(index);
+			}
+			index--;
+		}
+		
+		
+		ArrayList<String> yetToDo = new ArrayList<String>();
+		yetToDo.addAll(realStartNodes);		
+		
+		// these are the starting nodes of all other contigs
+		// all of them are non-branching! 
+		yetToDo.removeAll(endNodes);	
+		
+		for(int j = 0; j < yetToDo.size(); j++) {
+			String contig = new String();
+			index = realStartNodes.indexOf(yetToDo.get(j));
+			contig = kanten.get(index).get(0);
+			nextIndex = realStartNodes.indexOf(contig.substring(contig.length()-k+1, contig.length())); 
+			while (nextIndex != -1) { // endnode of last thingy is also startnode
+				if(kanten.get(nextIndex).size() == 1 && nextIndex != index) { // next Node is non-branching
+					contig += kanten.get(nextIndex).get(0).charAt(k-1);
+					kanten.remove(nextIndex);
+					realStartNodes.remove(nextIndex);
+					if(nextIndex < index) index--;
+					nextIndex = realStartNodes.indexOf(contig.substring(contig.length()-k+1, contig.length()));
+				} else { // if next node is branching break while + end contig
+					nextIndex = -1;
+				}
+			}
+					numContigs++;
+					contigs.add(contig);
+					file.write(">Contig Nummer"+ numContigs);
+					file.write(System.lineSeparator());
+					file.write(contig); // FASTA ANPASSUNG
+					file.write(System.lineSeparator());
+		}
+		file.close();
 	}
 }
