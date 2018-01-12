@@ -5,7 +5,7 @@ class GenomAssembling{
 	
 	public static void main(String[] args) throws IOException{
 	
-		FileReader fr = new FileReader("C:\\Users\\Acedon\\Desktop\\test.txt");
+		FileReader fr = new FileReader("test.txt");
 		BufferedReader br = new BufferedReader(fr);
 		
 		List<String> reads = new ArrayList<String>();
@@ -18,7 +18,7 @@ class GenomAssembling{
 		br.close();
 		
 		
-		int k = 85;
+		int k = 95;
 		ArrayList<String> brokenReads = new ArrayList<String>();
 		ArrayList<String> startNodes = new ArrayList<String>();
 		ArrayList<String> endNodes = new ArrayList<String>();
@@ -43,13 +43,13 @@ class GenomAssembling{
 //				node = read.substring(j, j+k-1);
 //				node2 = read.substring(j+1, j+k);
 				brokenReads.add(pattern);
-//				startNodes.add(node);  // enthält duplikate!
+//				startNodes.add(node);  // enthlt duplikate!
 //				endNodes.add(node2);
 			}
 			
 			
 //			brokenReads.add(pattern);
-//			startNodes.add(node);  // enthält duplikate!
+//			startNodes.add(node);  // enthlt duplikate!
 //			endNodes.add(node2);
 			
 		}	
@@ -95,7 +95,7 @@ class GenomAssembling{
 		int index = realStartNodes.size() - 1;
 		int nextIndex;
 		ArrayList<String> contigs = new ArrayList<String>();
-		FileWriter file = new FileWriter("C:\\Users\\Acedon\\Desktop\\output.fasta"); // FILEREADER ANPAsSEN!!!
+		FileWriter file = new FileWriter("output.fasta"); // FILEREADER ANPAsSEN!!!
 		int numContigs = 0;
 		// 
 		while(index >= 0) {
